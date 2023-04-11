@@ -13,13 +13,13 @@ import java.util.Map;
 @Service
 public class JwtServiceImpl implements JwtService {
 
-    private String secretKey = "abcd@@@efgh^^^ijkl***12345678dfafdsavdsvdsavsa%$%$#%$#&1232144325";
+    private String secretKey = "abbci2ioadij@@@ai17a662###8139!!!18ausudahd178316738687687@@ad6g";
 
     @Override
     public String getToken(String key, Object value) {
 
         Date expTime = new Date();
-        expTime.setTime(expTime.getTime() + 1000 * 60 * 5); // 5분
+        expTime.setTime(expTime.getTime() + 1000 * 60 * 30); // 5분
         byte[] secretByteKey = DatatypeConverter.parseBase64Binary(secretKey);
         Key signKey = new SecretKeySpec(secretByteKey, SignatureAlgorithm.HS256.getJcaName());
 

@@ -63,4 +63,14 @@ public class AccountController {
 
         return new ResponseEntity<>(null, HttpStatus.OK);
     }
+
+    @PostMapping("/api/account/duplicate")
+    public ResponseEntity duplicate(@RequestBody Map<String, String> params) {
+        Member member = memberRepository.findByEmail(params.get("email"));
+        System.out.println(member);
+        boolean check = false;
+        if (member != null)
+            check = true;
+        return new ResponseEntity<>(check, HttpStatus.OK);
+    }
 }

@@ -13,6 +13,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
 
@@ -64,13 +66,39 @@ public class AccountController {
         return new ResponseEntity<>(null, HttpStatus.OK);
     }
 
+    /**
+     * 중복검사
+     * @param params
+     * @return check
+     */
     @PostMapping("/api/account/duplicate")
     public ResponseEntity duplicate(@RequestBody Map<String, String> params) {
         Member member = memberRepository.findByEmail(params.get("email"));
-        System.out.println(member);
+
         boolean check = false;
         if (member != null)
             check = true;
         return new ResponseEntity<>(check, HttpStatus.OK);
+    }
+
+    /**
+     * 회원가입
+     * @param params
+     * @return
+     */
+    @PostMapping("/api/account/register")
+    public ResponseEntity register(@RequestBody Map<String, String> params) {
+        Member member = new Member();
+        member.setEmail(params.get("email"));
+        member.setPassword(params.get("password"));
+        member.setName(params.get("name"));
+        member.setBirthDate(params.get("year") + params.get("month") + params.get("day"));
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd hh:MM:ss");
+        member.setCreateDate(LocalDateTime.now().format(formatter));
+
+        memberRepository.save(member);
+
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }

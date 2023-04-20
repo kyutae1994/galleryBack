@@ -12,12 +12,14 @@ repositories {
     mavenCentral()
 }
 
+ext['spring-security.version']='6.0.1'
+
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
 
+    implementation 'org.springframework.boot:spring-boot-starter-security'
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-//    implementation 'org.springframework.boot:spring-boot-starter-jdbc'
     implementation 'mysql:mysql-connector-java:8.0.31'
 
     compileOnly 'org.projectlombok:lombok'

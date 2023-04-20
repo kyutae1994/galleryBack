@@ -8,3 +8,6 @@ spring:
 
   jpa:
     open-in-view: false
+
+jwt:
+  secret: gallerybackartbackend123354365464fdsagfdsgfdaggfdagd54352432543254325gdfdsgfdsgfdsgfds

@@ -2,8 +2,8 @@ package gallery.back.art.backend.controller;
 
 import gallery.back.art.backend.entity.Member;
 import gallery.back.art.backend.repository.MemberRepository;
+import gallery.back.art.backend.service.AccountService;
 import gallery.back.art.backend.service.JwtService;
-import gallery.back.art.backend.service.JwtServiceImpl;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
@@ -15,23 +15,24 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.List;
 import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
+@RequestMapping("/api/account")
 public class AccountController {
 
     private final MemberRepository memberRepository;
     private final JwtService jwtService;
+    private final AccountService accountService;
 
-    @PostMapping("/api/account/login")
+    @PostMapping("/login")
     public ResponseEntity login(@RequestBody Map<String, String> params, HttpServletResponse res) {
         Member member = memberRepository.findByEmailAndPassword(params.get("email"), params.get("password"));
 
         if (member != null) {
             int id = member.getId();
-            String token = jwtService.getToken("id", id);
+            String token = accountService.login(member.getEmail(), member.getPassword());
 
             Cookie cookie = new Cookie("token", token);
             cookie.setHttpOnly(true); // javascript로는 접근 x  보안때문에(해커들이 자바스크립트 쿠키로 시도 가능해서) XSS와 같은 공격이 차단
@@ -44,7 +45,12 @@ public class AccountController {
         throw new ResponseStatusException(HttpStatus.NOT_FOUND);
     }
 
-    @PostMapping("/api/account/logout")
+//    @PostMapping("/login")
+//    public ResponseEntity<String> login() {
+//        return ResponseEntity.ok().body(accountService.login("", ""));
+//    }
+
+    @PostMapping("/logout")
     public ResponseEntity logout(HttpServletResponse res) {
         Cookie cookie = new Cookie("token", null);
         cookie.setPath("/");
@@ -54,7 +60,7 @@ public class AccountController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @GetMapping("/api/account/check")
+    @GetMapping("/check")
     public ResponseEntity check(@CookieValue(value = "token", required = false) String token) {
         Claims claims = jwtService.getClaims(token);
 
@@ -71,7 +77,7 @@ public class AccountController {
      * @param params
      * @return check
      */
-    @PostMapping("/api/account/duplicate")
+    @PostMapping("/duplicate")
     public ResponseEntity duplicate(@RequestBody Map<String, String> params) {
         Member member = memberRepository.findByEmail(params.get("email"));
 
@@ -86,9 +92,10 @@ public class AccountController {
      * @param params
      * @return
      */
-    @PostMapping("/api/account/register")
+    @PostMapping("/register")
     public ResponseEntity register(@RequestBody Map<String, String> params) {
         Member member = new Member();
+
         member.setEmail(params.get("email"));
         member.setPassword(params.get("password"));
         member.setName(params.get("name"));

@@ -8,6 +8,12 @@ spring:
 
   jpa:
     open-in-view: false
+#    properties:
+#      hibernate:
+#        format_sql: true
+#        show_sql: true
+#    hibernate:
+#      ddl-auto: update
 
 jwt:
   secret: gallerybackartbackend123354365464fdsagfdsgfdaggfdagd54352432543254325gdfdsgfdsgfdsgfds

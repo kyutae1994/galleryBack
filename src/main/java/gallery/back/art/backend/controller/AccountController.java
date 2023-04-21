@@ -24,7 +24,7 @@ public class AccountController {
 
     private final MemberRepository memberRepository;
     private final JwtService jwtService;
-    private final AccountService accountService;
+//    private final AccountService accountService;
 
     @PostMapping("/login")
     public ResponseEntity login(@RequestBody Map<String, String> params, HttpServletResponse res) {
@@ -32,7 +32,8 @@ public class AccountController {
 
         if (member != null) {
             int id = member.getId();
-            String token = accountService.login(member.getEmail(), member.getPassword());
+//            String token = accountService.login(member.getEmail(), member.getPassword());
+            String token = jwtService.getToken("id", id);
 
             Cookie cookie = new Cookie("token", token);
             cookie.setHttpOnly(true); // javascript로는 접근 x  보안때문에(해커들이 자바스크립트 쿠키로 시도 가능해서) XSS와 같은 공격이 차단

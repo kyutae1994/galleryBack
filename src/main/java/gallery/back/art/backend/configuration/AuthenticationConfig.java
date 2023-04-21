@@ -30,13 +30,15 @@ public class AuthenticationConfig {
                 .csrf().disable()
                 .cors().and()
                 .authorizeHttpRequests()
-                .requestMatchers("/api/account/**").permitAll()
-                .requestMatchers(HttpMethod.POST, "/api/cart/**", "/api/items/**", "/api/orders/**").permitAll()
+                .requestMatchers("/api/account/**", "/").permitAll()
+                .requestMatchers("/api/cart/**").permitAll()
+                .requestMatchers("/api/items/**").permitAll()
+                .requestMatchers(HttpMethod.POST, "/api/orders/**").permitAll()
                 .and()
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
-                .addFilterBefore(new JwtFilter(accountService, secretKey), UsernamePasswordAuthenticationFilter.class)
+//                .addFilterBefore(new JwtFilter(accountService, secretKey), UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
 }

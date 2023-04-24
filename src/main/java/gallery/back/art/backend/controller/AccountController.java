@@ -14,6 +14,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -30,17 +31,15 @@ public class AccountController {
     private final BCryptPasswordEncoder encoder;
 
     @PostMapping("/login")
-    public ResponseEntity<Integer> login(@RequestBody Map<String, String> params, HttpServletResponse res) {
-//        Member member = accountRepository.findByEmailAndPassword(params.get("email"), params.get("password"));
+    public ResponseEntity login(@RequestBody Map<String, String> params, HttpServletResponse res) {
+        Member member = accountRepository.findByEmail(params.get("email"));
 
-//        if (member != null) {
-        JwtToken token = accountService.login(params.get("email"), params.get("password"));
-        Claims claims = jwtTokenProvider.parseClaims(token.toString());
-        int id = Integer.parseInt(claims.get("id").toString());
-        return ResponseEntity.ok(id);
-//        }
+        if (member != null && encoder.matches(params.get("password"), member.getPassword())) {
+            String token = accountService.login(params.get("email"), params.get("password"));
+            return ResponseEntity.ok(token.toString());
+        }
 
-//        throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        throw new ResponseStatusException(HttpStatus.NOT_FOUND);
     }
 
     @PostMapping("/logout")

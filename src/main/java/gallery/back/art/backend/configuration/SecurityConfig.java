@@ -31,7 +31,7 @@ public class SecurityConfig {
 //                .cors().and()
                 .formLogin().disable()
                 .authorizeHttpRequests()
-                .requestMatchers("/api/account/**", "/").permitAll()
+                .requestMatchers("/api/account/**").permitAll()
                 .requestMatchers("/api/cart/**").permitAll()
                 .requestMatchers("/api/items/**").permitAll()
                 .requestMatchers(HttpMethod.POST, "/api/orders/**").permitAll()

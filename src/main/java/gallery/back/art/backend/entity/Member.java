@@ -1,13 +1,16 @@
 package gallery.back.art.backend.entity;
 
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Setter
 @Getter
 @Entity
 @Table(name = "members")
+@NoArgsConstructor
 public class Member {
 
     @Id
@@ -20,6 +23,9 @@ public class Member {
     @Column(length = 100, nullable = false)
     private String password;
 
+    @Enumerated(EnumType.STRING)
+    private Role role;
+
     @Column(length = 20, nullable = false)
     private String name;
 
@@ -28,4 +34,8 @@ public class Member {
 
     @Column(nullable = false)
     private String createDate;
+
+    public String getRoleKey() {
+        return this.role.getKey();
+    }
 }

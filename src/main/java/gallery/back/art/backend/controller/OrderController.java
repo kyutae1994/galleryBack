@@ -1,10 +1,10 @@
 package gallery.back.art.backend.controller;
 
+import gallery.back.art.backend.configuration.JwtTokenProvider;
 import gallery.back.art.backend.dto.OrderDto;
 import gallery.back.art.backend.entity.Order;
 import gallery.back.art.backend.repository.CartRepository;
 import gallery.back.art.backend.repository.OrderRepository;
-import gallery.back.art.backend.service.JwtService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,17 +18,17 @@ import java.util.List;
 @RequiredArgsConstructor
 public class OrderController {
 
-    private final JwtService jwtService;
+    private final JwtTokenProvider jwtTokenProvider;
     private final OrderRepository orderRepository;
     private final CartRepository cartRepository;
 
     @GetMapping("/api/orders")
     public ResponseEntity getOrder(@CookieValue(value = "token", required = false) String token) {
-        if (!jwtService.isValid(token)) {
+        if (!jwtTokenProvider.validateToken(token)) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
         }
 
-        int memberId = jwtService.getId(token);
+        int memberId = jwtTokenProvider.getId(token);
         List<Order> orders = orderRepository.findByMemberIdOrderByIdDesc(memberId);
         return new ResponseEntity<>(orders, HttpStatus.OK);
     }
@@ -36,11 +36,11 @@ public class OrderController {
     @Transactional
     @PostMapping("/api/orders")
     public ResponseEntity pushOrder(@RequestBody OrderDto orderDto, @CookieValue(value = "token", required = false) String token) {
-        if (!jwtService.isValid(token)) {
+        if (!jwtTokenProvider.validateToken(token)) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
         }
 
-        int memberId = jwtService.getId(token);
+        int memberId = jwtTokenProvider.getId(token);
         Order newOrder = new Order();
 
         newOrder.setMemberId(memberId);

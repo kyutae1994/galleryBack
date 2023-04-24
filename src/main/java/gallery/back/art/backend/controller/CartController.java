@@ -1,10 +1,10 @@
 package gallery.back.art.backend.controller;
 
+import gallery.back.art.backend.configuration.JwtTokenProvider;
 import gallery.back.art.backend.entity.Cart;
 import gallery.back.art.backend.entity.Item;
 import gallery.back.art.backend.repository.CartRepository;
 import gallery.back.art.backend.repository.ItemRepository;
-import gallery.back.art.backend.service.JwtService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,18 +17,18 @@ import java.util.List;
 @RequiredArgsConstructor
 public class CartController {
 
-    private final JwtService jwtService;
+    private final JwtTokenProvider jwtTokenProvider;
     private final CartRepository cartRepository;
     private final ItemRepository itemRepository;
 
     // 카트 정보 조회
     @GetMapping("/api/cart/items")
     public ResponseEntity getCartItems(@CookieValue(value = "token", required = false) String token) {
-        if (!jwtService.isValid(token)) {
+        if (!jwtTokenProvider.validateToken(token)) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
         }
 
-        int memberId = jwtService.getId(token);
+        int memberId = jwtTokenProvider.getId(token);
         List<Cart> carts = cartRepository.findByMemberId(memberId);
         List<Integer> itemIds = carts.stream().map(Cart::getItemId).toList();
         List<Item> items = itemRepository.findByIdIn(itemIds);
@@ -39,11 +39,11 @@ public class CartController {
     // 장바구니를 담았을 때
     @PostMapping("/api/cart/items/{itemId}")
     public ResponseEntity pushCartItem(@PathVariable("itemId") int itemId, @CookieValue(value = "token", required = false) String token) {
-        if (!jwtService.isValid(token)) {
+        if (!jwtTokenProvider.validateToken(token)) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
         }
 
-        int memberId = jwtService.getId(token);
+        int memberId = jwtTokenProvider.getId(token);
         Cart cart = cartRepository.findByMemberIdAndItemId(memberId, itemId);
 
         if (cart == null) { // 아직 cart에 안담았으면 추가
@@ -59,11 +59,11 @@ public class CartController {
     @DeleteMapping("/api/cart/items/{itemId}")
     public ResponseEntity removeCartItem(@PathVariable("itemId") int itemId, @CookieValue(value = "token", required = false) String token) {
 
-        if (!jwtService.isValid(token)) {
+        if (!jwtTokenProvider.validateToken(token)) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
         }
 
-        int memberId = jwtService.getId(token);
+        int memberId = jwtTokenProvider.getId(token);
         Cart cart = cartRepository.findByMemberIdAndItemId(memberId, itemId);
 
         cartRepository.delete(cart);

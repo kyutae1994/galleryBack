@@ -87,16 +87,17 @@ public class AccountController {
      */
     @PostMapping("/register")
     public ResponseEntity register(@RequestBody Map<String, String> params) {
-        Member member = new Member();
-
-        member.setEmail(params.get("email"));
-        member.setPassword(encoder.encode(params.get("password")));
-        member.setName(params.get("name"));
-        member.setBirthDate(params.get("year") + params.get("month") + params.get("day"));
-        member.setRole(Role.USER);
-
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd hh:MM:ss");
-        member.setCreateDate(LocalDateTime.now().format(formatter));
+
+        Member member = Member.builder()
+                .email(params.get("email"))
+                .password(encoder.encode(params.get("password")))
+                .name(params.get("name"))
+                .birthDate(params.get("year") + params.get("month") + params.get("day"))
+                .createDate(LocalDateTime.now().format(formatter))
+                .build();
+
+        // TODO - 여기부터
 
         accountRepository.save(member);
 

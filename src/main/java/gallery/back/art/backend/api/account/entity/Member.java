@@ -1,12 +1,13 @@
 package gallery.back.art.backend.api.account.entity;
 
-import gallery.back.art.backend.common.auth.Role;
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
-@Setter
+import java.util.ArrayList;
+import java.util.List;
+
 @Getter
 @Entity
 @Table(name = "members")
@@ -15,16 +16,17 @@ public class Member {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    @Column(name = "member_id")
+    private Long id;
+
+    @OneToMany(mappedBy = "member")
+    private List<Member_Authority_Mapping> memberAuthorityMappings = new ArrayList<>();
 
     @Column(length = 50, nullable = false, unique = true)
     private String email;
 
     @Column(length = 100, nullable = false)
     private String password;
-
-    @Enumerated(EnumType.STRING)
-    private Role role;
 
     @Column(length = 20, nullable = false)
     private String name;
@@ -35,7 +37,14 @@ public class Member {
     @Column(nullable = false)
     private String createDate;
 
-    public String getRoleKey() {
-        return this.role.getKey();
+    @Builder
+    public Member(Long id, List<Member_Authority_Mapping> memberAuthorityMappings, String email, String password, String name, String birthDate, String createDate) {
+        this.id = id;
+        this.memberAuthorityMappings = memberAuthorityMappings;
+        this.email = email;
+        this.password = password;
+        this.name = name;
+        this.birthDate = birthDate;
+        this.createDate = createDate;
     }
 }

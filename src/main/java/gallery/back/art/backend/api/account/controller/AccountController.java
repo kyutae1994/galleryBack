@@ -1,5 +1,7 @@
 package gallery.back.art.backend.api.account.controller;
 
+import gallery.back.art.backend.api.account.entity.Authority;
+import gallery.back.art.backend.api.account.repository.AuthorityRepository;
 import gallery.back.art.backend.common.auth.JwtTokenProvider;
 import gallery.back.art.backend.api.account.entity.Member;
 import gallery.back.art.backend.common.auth.Role;
@@ -26,6 +28,7 @@ import java.util.Map;
 @RequestMapping("/api/account")
 public class AccountController {
 
+    private final AuthorityRepository authorityRepository;
     private final AccountRepository accountRepository;
     private final AccountService accountService;
     private final JwtTokenProvider jwtTokenProvider;
@@ -90,16 +93,19 @@ public class AccountController {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd hh:MM:ss");
 
         Member member = Member.builder()
-                .email(params.get("email"))
-                .password(encoder.encode(params.get("password")))
-                .name(params.get("name"))
-                .birthDate(params.get("year") + params.get("month") + params.get("day"))
-                .createDate(LocalDateTime.now().format(formatter))
-                .build();
+                        .email(params.get("email"))
+                        .password(encoder.encode(params.get("password")))
+                        .name(params.get("name"))
+                        .birthDate(params.get("year") + params.get("month") + params.get("day"))
+                        .createDate(LocalDateTime.now().format(formatter))
+                        .build();
 
-        // TODO - 여기부터
+        Authority authority = Authority.builder()
+                                .role(Role.USER)
+                                .build();
 
         accountRepository.save(member);
+        authorityRepository.save(authority);
 
         return new ResponseEntity<>(HttpStatus.OK);
     }

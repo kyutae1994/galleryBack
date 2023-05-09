@@ -2,13 +2,16 @@ package gallery.back.art.backend.api.account.entity;
 
 import gallery.back.art.backend.common.auth.Role;
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity
 @Getter
+@NoArgsConstructor
 public class Authority {
 
     @Id
@@ -19,6 +22,17 @@ public class Authority {
     @OneToMany(mappedBy = "authority")
     private List<Member_Authority_Mapping> memberAuthorityMappings = new ArrayList<>();
 
-    @Enumerated
+    @Enumerated(EnumType.STRING)
     private Role role;
+
+    public String getRoleKey() {
+        return this.role.getKey();
+    }
+
+    @Builder
+    public Authority(Long id, List<Member_Authority_Mapping> memberAuthorityMappings, Role role) {
+        this.id = id;
+        this.memberAuthorityMappings = memberAuthorityMappings;
+        this.role = role;
+    }
 }

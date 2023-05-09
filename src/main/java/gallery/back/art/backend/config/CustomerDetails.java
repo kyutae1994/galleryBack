@@ -1,5 +1,6 @@
 package gallery.back.art.backend.config;
 
+import gallery.back.art.backend.api.account.entity.Authority;
 import gallery.back.art.backend.api.account.entity.Member;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
@@ -13,10 +14,11 @@ import java.util.Collection;
 public class CustomerDetails implements UserDetails {
 
     private final Member member;
+    private final Authority authority;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return Arrays.asList(new SimpleGrantedAuthority(this.member.getRoleKey()));
+        return Arrays.asList(new SimpleGrantedAuthority(this.authority.getRoleKey()));
     }
 
     @Override

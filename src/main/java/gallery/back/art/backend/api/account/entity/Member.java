@@ -19,7 +19,7 @@ public class Member {
     @Column(name = "member_id")
     private Long id;
 
-    @OneToMany(mappedBy = "member")
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
     private List<Member_Authority_Mapping> memberAuthorityMappings = new ArrayList<>();
 
     @Column(length = 50, nullable = false, unique = true)

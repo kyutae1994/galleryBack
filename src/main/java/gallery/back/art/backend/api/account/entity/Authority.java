@@ -19,7 +19,7 @@ public class Authority {
     @Column(name = "authority_id")
     private Long id;
 
-    @OneToMany(mappedBy = "authority")
+    @OneToMany(mappedBy = "authority", cascade = CascadeType.ALL)
     private List<Member_Authority_Mapping> memberAuthorityMappings = new ArrayList<>();
 
     @Enumerated(EnumType.STRING)

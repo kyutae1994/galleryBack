@@ -1,6 +1,8 @@
 package gallery.back.art.backend.api.account.controller;
 
 import gallery.back.art.backend.api.account.entity.Authority;
+import gallery.back.art.backend.api.account.entity.Member_Authority_Mapping;
+import gallery.back.art.backend.api.account.repository.Account_Authority_Repository;
 import gallery.back.art.backend.api.account.repository.AuthorityRepository;
 import gallery.back.art.backend.common.auth.JwtTokenProvider;
 import gallery.back.art.backend.api.account.entity.Member;
@@ -30,6 +32,7 @@ public class AccountController {
 
     private final AuthorityRepository authorityRepository;
     private final AccountRepository accountRepository;
+    private final Account_Authority_Repository account_authority_repository;
     private final AccountService accountService;
     private final JwtTokenProvider jwtTokenProvider;
     private final BCryptPasswordEncoder encoder;
@@ -90,23 +93,31 @@ public class AccountController {
      */
     @PostMapping("/register")
     public ResponseEntity register(@RequestBody Map<String, String> params) {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd hh:MM:ss");
 
-        Member member = Member.builder()
-                        .email(params.get("email"))
-                        .password(encoder.encode(params.get("password")))
-                        .name(params.get("name"))
-                        .birthDate(params.get("year") + params.get("month") + params.get("day"))
-                        .createDate(LocalDateTime.now().format(formatter))
-                        .build();
+        if (accountRepository.findByEmail(params.get("email")) == null) {
+            Authority authority = authorityRepository.findIDByRole(Role.USER);
 
-        Authority authority = Authority.builder()
-                                .role(Role.USER)
-                                .build();
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd hh:MM:ss");
 
-        accountRepository.save(member);
-        authorityRepository.save(authority);
+            Member member = Member.builder()
+                    .email(params.get("email"))
+                    .password(encoder.encode(params.get("password")))
+                    .name(params.get("name"))
+                    .birthDate(params.get("year") + params.get("month") + params.get("day"))
+                    .createDate(LocalDateTime.now().format(formatter))
+                    .build();
 
-        return new ResponseEntity<>(HttpStatus.OK);
+            Member_Authority_Mapping memberAuthorityMapping = Member_Authority_Mapping.builder()
+                            .member(member)
+                            .authority(authority)
+                            .build();
+
+            accountRepository.save(member);
+            account_authority_repository.save(memberAuthorityMapping);
+
+            return new ResponseEntity<>(HttpStatus.OK);
+        }
+
+        throw new ResponseStatusException(HttpStatus.NOT_FOUND);
     }
 }

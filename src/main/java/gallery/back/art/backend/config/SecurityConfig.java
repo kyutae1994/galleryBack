@@ -32,7 +32,7 @@ public class SecurityConfig {
 //                .cors().and()
                 .formLogin().disable()
                 .authorizeHttpRequests()
-                .requestMatchers("/api/account/**").permitAll()
+                .requestMatchers("/api/account/**", "/").permitAll()
                 .requestMatchers("/**").hasAnyRole("USER")
                 .anyRequest().authenticated()
                 .and()

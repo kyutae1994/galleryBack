@@ -66,17 +66,11 @@ public class JwtTokenProvider {
         return JwtToken.builder().accessToken(accessToken).refreshToken(refreshToken).build();
     }
 
-    // 토큰 권한조회
-    public Authentication getAuthentication(String token){
-        UserDetails userDetails = getJwtUser(token);
-        return new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
-    }
-
     public Authentication getAuthentication(String accessToken) {
         //토큰 복호화
         Claims claims = parseClaims(accessToken);
 
-        if (claims.get("auth") == null) {
+        if (claims.get("roles") == null) {
             throw new RuntimeException("권한 정보가 없는 토큰입니다.");
         }
 
@@ -105,6 +99,7 @@ public class JwtTokenProvider {
         return false;
     }
 
+    //토큰에서 회원 정보 추출
     public Claims parseClaims(String accessToken) {
         try {
             return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(accessToken).getBody();

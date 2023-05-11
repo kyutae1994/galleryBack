@@ -4,12 +4,11 @@ import gallery.back.art.backend.api.account.entity.Authority;
 import gallery.back.art.backend.api.account.entity.Member_Authority_Mapping;
 import gallery.back.art.backend.api.account.repository.Account_Authority_Repository;
 import gallery.back.art.backend.api.account.repository.AuthorityRepository;
-import gallery.back.art.backend.common.auth.JwtTokenProvider;
+import gallery.back.art.backend.common.auth.JwtToken;
 import gallery.back.art.backend.api.account.entity.Member;
 import gallery.back.art.backend.common.auth.Role;
 import gallery.back.art.backend.api.account.repository.AccountRepository;
 import gallery.back.art.backend.api.account.service.AccountService;
-import gallery.back.art.backend.common.code.ErrorCode;
 import gallery.back.art.backend.common.dto.BaseResponseDto;
 import gallery.back.art.backend.common.error.CustomException;
 import jakarta.servlet.http.Cookie;
@@ -34,7 +33,6 @@ public class AccountController {
     private final AccountRepository accountRepository;
     private final Account_Authority_Repository account_authority_repository;
     private final AccountService accountService;
-    private final JwtTokenProvider jwtTokenProvider;
     private final BCryptPasswordEncoder encoder;
 
     @PostMapping("/login")
@@ -42,7 +40,7 @@ public class AccountController {
         Member member = accountRepository.findByEmail(params.get("email"));
 
         if (member != null && encoder.matches(params.get("password"), member.getPassword())) {
-            String token = accountService.login(params.get("email"), params.get("password"));
+            JwtToken token = accountService.login(params.get("email"), params.get("password"));
             return ResponseEntity.ok(BaseResponseDto.of(token));
         }
 
@@ -58,18 +56,6 @@ public class AccountController {
         res.addCookie(cookie);
         return new ResponseEntity<>(HttpStatus.OK);
     }
-
-//    @GetMapping("/check")
-//    public ResponseEntity check(@CookieValue(value = "token", required = false) String token) {
-//        Claims claims = jwtTokenProvider.parseClaims(token);
-//
-//        if (claims != null) {
-//            int id = Integer.parseInt(claims.get("id").toString());
-//            return new ResponseEntity<>(id, HttpStatus.OK);
-//        }
-//
-//        return new ResponseEntity<>(null, HttpStatus.OK);
-//    }
 
     /**
      * 중복검사

@@ -14,9 +14,7 @@ import org.springframework.stereotype.Component;
 
 import javax.xml.bind.DatatypeConverter;
 import java.security.Key;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Date;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -30,43 +28,48 @@ public class JwtTokenProvider {
         this.key = Keys.hmacShaKeyFor(secretByteKey);
     }
 
-    public String createToken(Authentication authentication) {
-        String authorities = authentication.getAuthorities().stream()
-                .map(GrantedAuthority::getAuthority)
-                .collect(Collectors.joining(","));
+    public JwtToken createAccessToken(String userLoginId, String refreshToken) {
+        Date now = new Date();
+        Claims claim = Jwts.claims().setSubject(userLoginId);
+        List<GrantedAuthority> authorities = new ArrayList<>();
+        authorities.add(new SimpleGrantedAuthority("ROLE_USER"));
+        claim.put("roles", authorities);
 
-        return Jwts.builder()
-                .setSubject(authentication.getName())
-                .claim("auth", authorities)
+        String accessToken = Jwts.builder()
+                .setClaims(claim)
+                .setIssuedAt(now)
                 .setExpiration(new Date(System.currentTimeMillis()+ 1000 * 60 * 30))
                 .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
+        return JwtToken.builder().accessToken(accessToken).refreshToken(refreshToken).build();
     }
 
-    public JwtToken generateToken(Authentication authentication) {
-        String authorities = authentication.getAuthorities().stream()
-                .map(GrantedAuthority::getAuthority)
-                .collect(Collectors.joining(","));
+    public JwtToken createRefreshToken(String userLoginId) {
+        Date now = new Date();
+        Claims claim = Jwts.claims().setSubject(userLoginId);
+        List<GrantedAuthority> authorities = new ArrayList<>();
+        authorities.add(new SimpleGrantedAuthority("ROLE_USER"));
+        claim.put("roles", authorities);
 
-        //Access Token 생성
         String accessToken = Jwts.builder()
-                .setSubject(authentication.getName())
-                .claim("auth", authorities)
+                .setClaims(claim)
+                .setIssuedAt(now)
                 .setExpiration(new Date(System.currentTimeMillis()+ 1000 * 60 * 30))
                 .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
-
-        //Refresh Token 생성
         String refreshToken = Jwts.builder()
+                .setClaims(claim)
+                .setIssuedAt(now)
                 .setExpiration(new Date(System.currentTimeMillis()+ 1000 * 60 * 60 * 36))
                 .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
+        return JwtToken.builder().accessToken(accessToken).refreshToken(refreshToken).build();
+    }
 
-        return JwtToken.builder()
-                .grantType("Bearer")
-                .accessToken(accessToken)
-                .refreshToken(refreshToken)
-                .build();
+    // 토큰 권한조회
+    public Authentication getAuthentication(String token){
+        UserDetails userDetails = getJwtUser(token);
+        return new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
     }
 
     public Authentication getAuthentication(String accessToken) {

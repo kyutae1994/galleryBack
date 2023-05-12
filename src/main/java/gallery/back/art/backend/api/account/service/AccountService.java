@@ -22,7 +22,7 @@ public class AccountService {
     public JwtToken login(String email, String password) throws CustomException {
         // Authentication 객체 생성
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(email, password);
-        Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
+//        Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
 
         // 검증된 인증 정보로 JWT 토큰 생성
         try{

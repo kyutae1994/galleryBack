@@ -28,7 +28,7 @@ public class OrderController {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
         }
 
-        int memberId = jwtTokenProvider.getId(token);
+        Long memberId = jwtTokenProvider.getAccountId(token);
         List<Order> orders = orderRepository.findByMemberIdOrderByIdDesc(memberId);
         return new ResponseEntity<>(orders, HttpStatus.OK);
     }
@@ -40,7 +40,7 @@ public class OrderController {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
         }
 
-        int memberId = jwtTokenProvider.getId(token);
+        Long memberId = jwtTokenProvider.getAccountId(token);
         Order newOrder = new Order();
 
         newOrder.setMemberId(memberId);

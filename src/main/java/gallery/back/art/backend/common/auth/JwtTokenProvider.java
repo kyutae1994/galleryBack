@@ -1,11 +1,13 @@
 package gallery.back.art.backend.common.auth;
 
 import gallery.back.art.backend.api.account.repository.AccountRepository;
+import gallery.back.art.backend.api.account.repository.JoinRoleRepository;
 import gallery.back.art.backend.common.util.CommonUtil;
 import gallery.back.art.backend.config.CustomerDetails;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -24,14 +26,19 @@ import java.util.stream.Collectors;
 @Component
 public class JwtTokenProvider {
 
-    private final Key key;
-    private final AccountRepository accountRepository;
+    private final JoinRoleRepository joinRoleRepository;
 
-    public JwtTokenProvider(@Value("${jwt.secret}") String secretKey, AccountRepository accountRepository) {
-        this.accountRepository = accountRepository;
-        byte[] secretByteKey = DatatypeConverter.parseBase64Binary(secretKey);
-        this.key = Keys.hmacShaKeyFor(secretByteKey);
+    @Autowired
+    public JwtTokenProvider(JoinRoleRepository joinRoleRepository) {
+        this.joinRoleRepository = joinRoleRepository;
     }
+
+    @Value("${jwt.secret}")
+    private String JWT_SECRET_KEY;
+    @Value("${jwt.accessTokenValidationSecond}")
+    private String TOKEN_VALIDATION_SECOND;
+    @Value("${jwt.refreshTokenValidationSecond}")
+    private String REFRESH_TOKEN_VALIDATION_SECOND;
 
     /**
      * JWT 토큰 발급
@@ -47,7 +54,7 @@ public class JwtTokenProvider {
                 .setId(accountId)
                 .setIssuedAt(now)
                 .setExpiration(new Date(now.getTime() + Long.parseLong(tokenTime)))
-                .signWith(key, SignatureAlgorithm.HS256)
+                .signWith(SignatureAlgorithm.HS256, JWT_SECRET_KEY)
                 .compact();
     }
 
@@ -56,9 +63,8 @@ public class JwtTokenProvider {
      * @param accountLoginId - 유저 Login 시 사용된 Account Id
      */
     public String createAccessToken(String accountLoginId) {
-        String accountId = accountRepository.findByEmail(accountLoginId).getId().toString();
-        String tokenTime = String.valueOf(new Date(System.currentTimeMillis()+ 1000 * 60 * 30));
-        return createToken(accountId, accountLoginId, tokenTime);
+        String accountId = joinRoleRepository.findIdByEmail(accountLoginId);
+        return createToken(accountId, accountLoginId, TOKEN_VALIDATION_SECOND);
     }
 
     /**
@@ -66,9 +72,8 @@ public class JwtTokenProvider {
      * @param accountLoginId - 유저 Login 시 사용된 Account Id
      */
     public String createRefreshToken(String accountLoginId) {
-        String accountId = accountRepository.findByEmail(accountLoginId).getId().toString();
-        String tokenTime = String.valueOf(new Date(System.currentTimeMillis()+ 1000 * 60 * 60 * 36));
-        return createToken(accountId, accountLoginId, tokenTime);
+        String accountId = joinRoleRepository.findIdByEmail(accountLoginId);
+        return createToken(accountId, accountLoginId, REFRESH_TOKEN_VALIDATION_SECOND);
     }
 
     /**
@@ -77,7 +82,7 @@ public class JwtTokenProvider {
      */
     public Long getAccountId(String token) {
         String accessToken = getAccessToken(token);
-        String accountId = Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(accessToken).getBody().getId();
+        String accountId = Jwts.parserBuilder().setSigningKey(JWT_SECRET_KEY).build().parseClaimsJws(accessToken).getBody().getId();
         return Long.parseLong(accountId);
     }
 
@@ -87,7 +92,7 @@ public class JwtTokenProvider {
      */
     public String getAccountLoginId(String token) {
         String accessToken = getAccessToken(token);
-        return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(accessToken).getBody().getSubject();
+        return Jwts.parserBuilder().setSigningKey(JWT_SECRET_KEY).build().parseClaimsJws(accessToken).getBody().getSubject();
     }
 
     public Authentication getAuthentication(String token){
@@ -100,8 +105,7 @@ public class JwtTokenProvider {
         Long userId = getAccountId(token);
         List<GrantedAuthority> authorities = new ArrayList<>();
         // TODO - JPQL 적용시켜보기
-        IndistAdminApiManagerDto dto = indistAdminApiManagerService.getManagerDetailById(userId);
-        List<String> userAuthorityList = List.of(dto.getManagerAuthorityNames().split(","));
+        List<String> userAuthorityList = joinRoleRepository.findRoleByAccountId(userId);
         for(String userAuthorityName : userAuthorityList ){
             // "ROLE_" 가 반드시 있어야 Security가 인식함
             String userRole = "ROLE_" + userAuthorityName;
@@ -123,7 +127,7 @@ public class JwtTokenProvider {
 
     public boolean validateToken(String token) {
         try {
-            Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
+            Jwts.parserBuilder().setSigningKey(JWT_SECRET_KEY).build().parseClaimsJws(token);
             return true;
         }catch (io.jsonwebtoken.security.SecurityException | MalformedJwtException e) {
             log.info("Invalid JWT Token", e);
@@ -140,7 +144,7 @@ public class JwtTokenProvider {
     //토큰에서 회원 정보 추출
     public Claims parseClaims(String accessToken) {
         try {
-            return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(accessToken).getBody();
+            return Jwts.parserBuilder().setSigningKey(JWT_SECRET_KEY).build().parseClaimsJws(accessToken).getBody();
         } catch (ExpiredJwtException e) {
             return e.getClaims();
         }

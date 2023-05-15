@@ -1,8 +1,8 @@
 package gallery.back.art.backend.api.account.controller;
 
 import gallery.back.art.backend.api.account.entity.Authority;
-import gallery.back.art.backend.api.account.entity.Member_Authority_Mapping;
-import gallery.back.art.backend.api.account.repository.Account_Authority_Repository;
+import gallery.back.art.backend.api.account.entity.MemberAuthorityMapping;
+import gallery.back.art.backend.api.account.repository.AccountAuthorityRepository;
 import gallery.back.art.backend.api.account.repository.AuthorityRepository;
 import gallery.back.art.backend.api.account.entity.Member;
 import gallery.back.art.backend.common.auth.Role;
@@ -30,7 +30,7 @@ public class AccountController {
 
     private final AuthorityRepository authorityRepository;
     private final AccountRepository accountRepository;
-    private final Account_Authority_Repository account_authority_repository;
+    private final AccountAuthorityRepository account_authority_repository;
     private final AccountService accountService;
     private final BCryptPasswordEncoder encoder;
 
@@ -92,7 +92,7 @@ public class AccountController {
                     .createDate(LocalDateTime.now().format(formatter))
                     .build();
 
-            Member_Authority_Mapping memberAuthorityMapping = Member_Authority_Mapping.builder()
+            MemberAuthorityMapping memberAuthorityMapping = MemberAuthorityMapping.builder()
                             .member(member)
                             .authority(authority)
                             .build();

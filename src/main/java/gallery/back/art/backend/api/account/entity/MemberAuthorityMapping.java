@@ -7,9 +7,9 @@ import lombok.NoArgsConstructor;
 import static jakarta.persistence.FetchType.*;
 
 @Entity
-@Table(name = "Member_Authority")
+@Table(name = "member_authority")
 @NoArgsConstructor
-public class Member_Authority_Mapping {
+public class MemberAuthorityMapping {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -25,7 +25,7 @@ public class Member_Authority_Mapping {
     private Authority authority;
 
     @Builder
-    public Member_Authority_Mapping(Long id, Member member, Authority authority) {
+    public MemberAuthorityMapping(Long id, Member member, Authority authority) {
         this.id = id;
         this.member = member;
         this.authority = authority;

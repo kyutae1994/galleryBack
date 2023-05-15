@@ -23,7 +23,6 @@ import java.util.Enumeration;
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtTokenProvider jwtTokenProvider;
-    private final AccountRepository accountRepository;
 
     @Override
     protected void doFilterInternal(HttpServletRequest req, HttpServletResponse resp, FilterChain filterChain) throws ServletException, IOException {

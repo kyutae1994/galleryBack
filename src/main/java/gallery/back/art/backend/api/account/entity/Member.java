@@ -20,7 +20,7 @@ public class Member {
     private Long id;
 
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
-    private List<Member_Authority_Mapping> memberAuthorityMappings = new ArrayList<>();
+    private List<MemberAuthorityMapping> memberAuthorityMappings = new ArrayList<>();
 
     @Column(length = 50, nullable = false, unique = true)
     private String email;
@@ -38,7 +38,7 @@ public class Member {
     private String createDate;
 
     @Builder
-    public Member(Long id, List<Member_Authority_Mapping> memberAuthorityMappings, String email, String password, String name, String birthDate, String createDate) {
+    public Member(Long id, List<MemberAuthorityMapping> memberAuthorityMappings, String email, String password, String name, String birthDate, String createDate) {
         this.id = id;
         this.memberAuthorityMappings = memberAuthorityMappings;
         this.email = email;

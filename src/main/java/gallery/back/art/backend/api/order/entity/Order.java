@@ -12,10 +12,10 @@ public class Order {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private Long id;
 
     @Column
-    private int memberId;
+    private Long memberId;
 
     @Column(length = 50, nullable = false)
     private String name;

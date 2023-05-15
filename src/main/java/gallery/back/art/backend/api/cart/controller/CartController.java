@@ -28,9 +28,9 @@ public class CartController {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
         }
 
-        int memberId = jwtTokenProvider.getId(token);
+        Long memberId = jwtTokenProvider.getAccountId(token);
         List<Cart> carts = cartRepository.findByMemberId(memberId);
-        List<Integer> itemIds = carts.stream().map(Cart::getItemId).toList();
+        List<Long> itemIds = carts.stream().map(Cart::getItemId).toList();
         List<Item> items = itemRepository.findByIdIn(itemIds);
 
         return new ResponseEntity<>(items, HttpStatus.OK);
@@ -38,12 +38,12 @@ public class CartController {
 
     // 장바구니를 담았을 때
     @PostMapping("/api/cart/items/{itemId}")
-    public ResponseEntity pushCartItem(@PathVariable("itemId") int itemId, @CookieValue(value = "token", required = false) String token) {
+    public ResponseEntity pushCartItem(@PathVariable("itemId") Long itemId, @CookieValue(value = "token", required = false) String token) {
         if (!jwtTokenProvider.validateToken(token)) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
         }
 
-        int memberId = jwtTokenProvider.getId(token);
+        Long memberId = jwtTokenProvider.getAccountId(token);
         Cart cart = cartRepository.findByMemberIdAndItemId(memberId, itemId);
 
         if (cart == null) { // 아직 cart에 안담았으면 추가
@@ -57,13 +57,13 @@ public class CartController {
     }
 
     @DeleteMapping("/api/cart/items/{itemId}")
-    public ResponseEntity removeCartItem(@PathVariable("itemId") int itemId, @CookieValue(value = "token", required = false) String token) {
+    public ResponseEntity removeCartItem(@PathVariable("itemId") Long itemId, @CookieValue(value = "token", required = false) String token) {
 
         if (!jwtTokenProvider.validateToken(token)) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
         }
 
-        int memberId = jwtTokenProvider.getId(token);
+        Long memberId = jwtTokenProvider.getAccountId(token);
         Cart cart = cartRepository.findByMemberIdAndItemId(memberId, itemId);
 
         cartRepository.delete(cart);

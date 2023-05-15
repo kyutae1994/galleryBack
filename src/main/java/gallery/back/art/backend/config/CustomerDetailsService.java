@@ -2,8 +2,7 @@ package gallery.back.art.backend.config;
 
 import gallery.back.art.backend.api.account.entity.Member;
 import gallery.back.art.backend.api.account.repository.AccountRepository;
-import gallery.back.art.backend.api.account.repository.Account_Authority_Repository;
-import gallery.back.art.backend.api.account.repository.AuthorityRepository;
+import gallery.back.art.backend.api.account.repository.AccountAuthorityRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.GrantedAuthority;
@@ -13,7 +12,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -25,7 +23,7 @@ import java.util.List;
 public class CustomerDetailsService implements UserDetailsService {
 
     private final AccountRepository accountRepository;
-    private final Account_Authority_Repository account_authority_repository;
+    private final AccountAuthorityRepository account_authority_repository;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {

@@ -20,7 +20,7 @@ public class Authority {
     private Long id;
 
     @OneToMany(mappedBy = "authority", cascade = CascadeType.ALL)
-    private List<Member_Authority_Mapping> memberAuthorityMappings = new ArrayList<>();
+    private List<MemberAuthorityMapping> memberAuthorityMappings = new ArrayList<>();
 
     @Enumerated(EnumType.STRING)
     private Role role;
@@ -30,7 +30,7 @@ public class Authority {
     }
 
     @Builder
-    public Authority(Long id, List<Member_Authority_Mapping> memberAuthorityMappings, Role role) {
+    public Authority(Long id, List<MemberAuthorityMapping> memberAuthorityMappings, Role role) {
         this.id = id;
         this.memberAuthorityMappings = memberAuthorityMappings;
         this.role = role;

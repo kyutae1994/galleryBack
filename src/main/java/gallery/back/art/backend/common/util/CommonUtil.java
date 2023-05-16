@@ -9,7 +9,7 @@ public class CommonUtil {
      */
     public static boolean isStringEmpty(String o) {
         boolean chk = false;
-        if (o.isBlank() || o == null) {
+        if (o == null || o.isBlank()) {
             chk = true;
         }
 

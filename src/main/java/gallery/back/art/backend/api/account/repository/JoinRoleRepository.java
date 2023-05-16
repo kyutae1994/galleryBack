@@ -33,8 +33,8 @@ public class JoinRoleRepository {
 //                .from(a)
 //                .join(auth).on()
         return em.createQuery("SELECT a.role " +
-                "FROM Authority a, (SELECT ma.authority.id as id FROM MemberAuthorityMapping ma WHERE ma.member.id = id) ma " +
-                "WHERE a.id = ma.id").getResultList();
+                "FROM Authority a, (SELECT ma.authority.id as id FROM MemberAuthorityMapping ma WHERE ma.member.id = :id) t " +
+                "WHERE a.id = t.id").setParameter("id", id).getResultList();
     }
 
     public String findIdByEmail(String loginId) {

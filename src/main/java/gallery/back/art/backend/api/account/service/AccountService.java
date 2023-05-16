@@ -1,5 +1,7 @@
 package gallery.back.art.backend.api.account.service;
 
+import gallery.back.art.backend.api.account.repository.AccountRepository;
+import gallery.back.art.backend.common.auth.JwtToken;
 import gallery.back.art.backend.common.auth.JwtTokenProvider;
 import gallery.back.art.backend.common.code.ErrorCode;
 import gallery.back.art.backend.common.error.CustomException;
@@ -13,12 +15,22 @@ import org.springframework.transaction.annotation.Transactional;
 public class AccountService {
 
     private final JwtTokenProvider jwtTokenProvider;
+    private final AccountRepository accountRepository;
 
-    public String login(String email) throws CustomException {
+    public JwtToken login(String email) throws CustomException {
+
+        String accountId = accountRepository.findByEmail(email).getId().toString();
 
         // 검증된 인증 정보로 JWT 토큰 생성
         try{
-            String token = jwtTokenProvider.createRefreshToken(email);
+            String refreshToken = jwtTokenProvider.createRefreshToken(email);
+            String accessToken = jwtTokenProvider.createAccessToken(email);
+
+            JwtToken token = JwtToken.builder()
+                    .userId(accountId)
+                    .accessToken(accessToken)
+                    .refreshToken(refreshToken)
+                    .build();
             return token;
         } catch (Exception e) {
             throw new CustomException(ErrorCode.SYSTEM_ERROR, this.getClass().getName());

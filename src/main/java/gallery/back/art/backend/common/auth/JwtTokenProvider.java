@@ -104,7 +104,6 @@ public class JwtTokenProvider {
         CustomerDetails customerDetails = new CustomerDetails(getAccountLoginId(token));
         Long userId = getAccountId(token);
         List<GrantedAuthority> authorities = new ArrayList<>();
-        // TODO - JPQL 적용시켜보기
         List<String> userAuthorityList = joinRoleRepository.findRoleByAccountId(userId);
         for(String userAuthorityName : userAuthorityList ){
             // "ROLE_" 가 반드시 있어야 Security가 인식함

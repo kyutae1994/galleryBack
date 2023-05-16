@@ -5,6 +5,7 @@ import gallery.back.art.backend.api.account.entity.MemberAuthorityMapping;
 import gallery.back.art.backend.api.account.repository.AccountAuthorityRepository;
 import gallery.back.art.backend.api.account.repository.AuthorityRepository;
 import gallery.back.art.backend.api.account.entity.Member;
+import gallery.back.art.backend.common.auth.JwtToken;
 import gallery.back.art.backend.common.auth.Role;
 import gallery.back.art.backend.api.account.repository.AccountRepository;
 import gallery.back.art.backend.api.account.service.AccountService;
@@ -39,7 +40,7 @@ public class AccountController {
         Member member = accountRepository.findByEmail(params.get("email"));
 
         if (member != null && encoder.matches(params.get("password"), member.getPassword())) {
-            String token = accountService.login(params.get("email"));
+            JwtToken token = accountService.login(params.get("email"));
             return ResponseEntity.ok(BaseResponseDto.of(token));
         }
 

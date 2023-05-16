@@ -1,6 +1,5 @@
 package gallery.back.art.backend.api.account.repository;
 
-import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import gallery.back.art.backend.api.account.entity.QMember;
 import jakarta.persistence.EntityManager;
@@ -32,9 +31,16 @@ public class JoinRoleRepository {
 //                .select(a.role)
 //                .from(a)
 //                .join(auth).on()
-        return em.createQuery("SELECT a.role " +
-                "FROM Authority a, (SELECT ma.authority.id as id FROM MemberAuthorityMapping ma WHERE ma.member.id = :id) t " +
-                "WHERE a.id = t.id").setParameter("id", id).getResultList();
+        String subJpql = "select ma.authority.id as id FROM MemberAuthorityMapping ma WHERE ma.member.id = :id";
+        String jpql = "select a.role from Authority a, " + subJpql + " t where a.id = t.id";
+        return em.createQuery(jpql)
+                .setParameter("id", id)
+                .getResultList();
+//                em.createQuery("SELECT a.role " +
+//                "FROM Authority a, (SELECT ma.authority.id as id FROM MemberAuthorityMapping ma WHERE ma.member.id = :id) t " +
+//                "WHERE a.id = t.id")
+//                .setParameter("id", id)
+//                .getResultList();
     }
 
     public String findIdByEmail(String loginId) {

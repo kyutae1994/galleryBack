@@ -39,7 +39,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         try {
             String acToken = jwtTokenProvider.getAccessToken(req.getHeader("authorization"));
-            System.out.println(acToken);
             resp.setHeader("accessToken", acToken);
             String reToken = req.getHeader("refreshtoken");
             log.info("acToken ===="+acToken);

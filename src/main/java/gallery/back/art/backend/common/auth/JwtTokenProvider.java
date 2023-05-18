@@ -104,8 +104,8 @@ public class JwtTokenProvider {
         CustomerDetails customerDetails = new CustomerDetails(getAccountLoginId(token));
         Long userId = getAccountId(token);
         List<GrantedAuthority> authorities = new ArrayList<>();
-        List<String> userAuthorityList = joinRoleRepository.findRoleByAccountId(userId);
-        for(String userAuthorityName : userAuthorityList ){
+        List<Role> userAuthorityList = joinRoleRepository.findRoleByAccountId(userId);
+        for(Role userAuthorityName : userAuthorityList ){
             // "ROLE_" 가 반드시 있어야 Security가 인식함
             String userRole = "ROLE_" + userAuthorityName;
             authorities.add(new SimpleGrantedAuthority(userRole));

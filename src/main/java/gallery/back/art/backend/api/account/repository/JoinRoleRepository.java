@@ -20,7 +20,6 @@ public class JoinRoleRepository {
     @PersistenceContext
     private final EntityManager em;
 
-    // SELECT a.`role` FROM member_authority ma INNER join authority a WHERE ma.member_id = 4 AND ma.authority_id = a.authority_id
     public List<Role> findRoleByAccountId(Long id) {
 
         JPAQueryFactory queryFactory = new JPAQueryFactory(em);
@@ -29,10 +28,12 @@ public class JoinRoleRepository {
         return queryFactory
                 .select(authority.role)
                 .from(memberAuthorityMapping)
-                .join(authority).on(memberAuthorityMapping.id.eq(authority.id)).fetchJoin()
+                .join(authority).on(memberAuthorityMapping.authority.id.eq(authority.id)).fetchJoin()
+                .where(memberAuthorityMapping.member.id.eq(id))
                 .fetch();
-
     }
+
+    // TODO - 맨 처음 플젝 킬때 로그 아웃 되있게 하기
 
     public String findIdByEmail(String loginId) {
         JPAQueryFactory queryFactory = new JPAQueryFactory(em);

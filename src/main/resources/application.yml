@@ -18,4 +18,4 @@ spring:
 jwt:
   secret: gallerybackartbackend123354365464fdsagfdsgfdaggfdagd54352432543254325gdfdsgfdsgfdsgfds
   accessTokenValidationSecond: 1800000
-  refreshTokenValidationSecond: 129600000
+  refreshTokenValidationSecond: 12960000

@@ -69,7 +69,7 @@ public class AccountController {
         boolean check = false;
         if (member != null)
             check = true;
-        return new ResponseEntity<>(check, HttpStatus.OK);
+        return ResponseEntity.ok(BaseResponseDto.of(check));
     }
 
     /**

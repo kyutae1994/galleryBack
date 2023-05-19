@@ -95,11 +95,21 @@ public class JwtTokenProvider {
         return Jwts.parserBuilder().setSigningKey(JWT_SECRET_KEY).build().parseClaimsJws(accessToken).getBody().getSubject();
     }
 
+    /**
+     * 유저 정보를 받아온다
+     * @param token
+     * @return Authentication
+     */
     public Authentication getAuthentication(String token){
         UserDetails userDetails = getJwtUser(token);
         return new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
     }
 
+    /**
+     * 토큰 정보에 권한을 조회에서 추가해준다.
+     * @param token
+     * @return CustomerDetails
+     */
     private CustomerDetails getJwtUser(String token) {
         CustomerDetails customerDetails = new CustomerDetails(getAccountLoginId(token));
         Long userId = getAccountId(token);
@@ -124,6 +134,11 @@ public class JwtTokenProvider {
         return accessToken.split("Bearer ")[1];
     }
 
+    /**
+     * 토큰 유효값 체크
+     * @param token
+     * @return boolean
+     */
     public boolean validateToken(String token) {
         try {
             Jwts.parserBuilder().setSigningKey(JWT_SECRET_KEY).build().parseClaimsJws(token);
@@ -138,15 +153,6 @@ public class JwtTokenProvider {
             log.info("JWT claims string is empty.", e);
         }
         return false;
-    }
-
-    //토큰에서 회원 정보 추출
-    public Claims parseClaims(String accessToken) {
-        try {
-            return Jwts.parserBuilder().setSigningKey(JWT_SECRET_KEY).build().parseClaimsJws(accessToken).getBody();
-        } catch (ExpiredJwtException e) {
-            return e.getClaims();
-        }
     }
 }
 

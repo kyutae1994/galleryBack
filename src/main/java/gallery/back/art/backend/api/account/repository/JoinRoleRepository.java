@@ -33,7 +33,7 @@ public class JoinRoleRepository {
                 .fetch();
     }
 
-    // TODO - 맨 처음 플젝 킬때 로그 아웃 되있게 하기
+    // TODO - 맨 처음 플젝 킬때 로그 아웃 되있게 하기, 노션 querydsl 정리
 
     public String findIdByEmail(String loginId) {
         JPAQueryFactory queryFactory = new JPAQueryFactory(em);

@@ -5,6 +5,8 @@ import gallery.back.art.backend.api.order.dto.OrderDto;
 import gallery.back.art.backend.api.order.entity.Order;
 import gallery.back.art.backend.api.cart.repository.CartRepository;
 import gallery.back.art.backend.api.order.repository.OrderRepository;
+import gallery.back.art.backend.common.dto.BaseResponseDto;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,7 +25,8 @@ public class OrderController {
     private final CartRepository cartRepository;
 
     @GetMapping("/api/orders")
-    public ResponseEntity getOrder(@CookieValue(value = "token", required = false) String token) {
+    public ResponseEntity getOrder(HttpServletRequest req) {
+        String token = jwtTokenProvider.getAccessToken(req.getHeader("authorization"));
         if (!jwtTokenProvider.validateToken(token)) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
         }
@@ -32,10 +35,13 @@ public class OrderController {
         List<Order> orders = orderRepository.findByMemberIdOrderByIdDesc(memberId);
         return new ResponseEntity<>(orders, HttpStatus.OK);
     }
+    
+    // TODO - DTO로 return 시키기
 
     @Transactional
     @PostMapping("/api/orders")
-    public ResponseEntity pushOrder(@RequestBody OrderDto orderDto, @CookieValue(value = "token", required = false) String token) {
+    public ResponseEntity pushOrder(@RequestBody OrderDto orderDto, HttpServletRequest req) {
+        String token = jwtTokenProvider.getAccessToken(req.getHeader("authorization"));
         if (!jwtTokenProvider.validateToken(token)) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
         }

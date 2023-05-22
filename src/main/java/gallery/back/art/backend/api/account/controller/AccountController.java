@@ -11,8 +11,6 @@ import gallery.back.art.backend.api.account.repository.AccountRepository;
 import gallery.back.art.backend.api.account.service.AccountService;
 import gallery.back.art.backend.common.dto.BaseResponseDto;
 import gallery.back.art.backend.common.error.CustomException;
-import jakarta.servlet.http.Cookie;
-import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -36,7 +34,7 @@ public class AccountController {
     private final BCryptPasswordEncoder encoder;
 
     @PostMapping("/login")
-    public ResponseEntity login(@RequestBody Map<String, String> params, HttpServletResponse res) throws CustomException {
+    public ResponseEntity login(@RequestBody Map<String, String> params) throws CustomException {
         Member member = accountRepository.findByEmail(params.get("email"));
 
         if (member != null && encoder.matches(params.get("password"), member.getPassword())) {
@@ -48,12 +46,7 @@ public class AccountController {
     }
 
     @PostMapping("/logout")
-    public ResponseEntity logout(HttpServletResponse res) {
-        Cookie cookie = new Cookie("token", null);
-        cookie.setPath("/");
-        cookie.setMaxAge(0);
-
-        res.addCookie(cookie);
+    public ResponseEntity logout() {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 

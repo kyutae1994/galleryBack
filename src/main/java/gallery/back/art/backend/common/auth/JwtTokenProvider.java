@@ -92,7 +92,8 @@ public class JwtTokenProvider {
      */
     public String getAccountLoginId(String token) {
         String accessToken = getAccessToken(token);
-        return Jwts.parserBuilder().setSigningKey(JWT_SECRET_KEY).build().parseClaimsJws(accessToken).getBody().getSubject();
+        String accountLoginId = Jwts.parser().setSigningKey(JWT_SECRET_KEY).parseClaimsJws(accessToken).getBody().getSubject();
+        return accountLoginId;
     }
 
     /**

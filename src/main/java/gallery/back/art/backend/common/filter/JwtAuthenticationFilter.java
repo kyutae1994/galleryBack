@@ -63,8 +63,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                     tokenValidationCheck(resp, acToken, reToken);
                 }
             }
-            Authentication authentication = jwtTokenProvider.getAuthentication(acToken);
-            SecurityContextHolder.getContext().setAuthentication(authentication);
+            String newAcToken = resp.getHeader("accessToken");
+            if(!jwtTokenProvider.validateToken(acToken)){
+                Authentication authentication = jwtTokenProvider.getAuthentication(newAcToken);
+                SecurityContextHolder.getContext().setAuthentication(authentication);
+            } else {
+                Authentication authentication = jwtTokenProvider.getAuthentication(acToken);
+                SecurityContextHolder.getContext().setAuthentication(authentication);
+            }
         }
     }
 

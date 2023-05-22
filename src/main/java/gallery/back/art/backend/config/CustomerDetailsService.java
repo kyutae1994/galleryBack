@@ -34,8 +34,6 @@ public class CustomerDetailsService implements UserDetailsService {
         return new User(member.getEmail(), member.getPassword(), getAuthorities(username));
     }
 
-    //TODO - 권한 JoinRoleRepository에서 갖고오기
-
     public Collection<GrantedAuthority> getAuthorities(String username) {
 
         Member member = accountRepository.findByEmail(username);

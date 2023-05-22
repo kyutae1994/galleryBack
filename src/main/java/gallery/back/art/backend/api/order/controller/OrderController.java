@@ -1,5 +1,6 @@
 package gallery.back.art.backend.api.order.controller;
 
+import gallery.back.art.backend.api.order.dto.OrderTokenDto;
 import gallery.back.art.backend.common.auth.JwtTokenProvider;
 import gallery.back.art.backend.api.order.dto.OrderDto;
 import gallery.back.art.backend.api.order.entity.Order;
@@ -7,6 +8,7 @@ import gallery.back.art.backend.api.cart.repository.CartRepository;
 import gallery.back.art.backend.api.order.repository.OrderRepository;
 import gallery.back.art.backend.common.dto.BaseResponseDto;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,19 +27,26 @@ public class OrderController {
     private final CartRepository cartRepository;
 
     @GetMapping("/api/orders")
-    public ResponseEntity getOrder(HttpServletRequest req) {
+    public ResponseEntity getOrder(HttpServletRequest req, HttpServletResponse resp) {
         String token = jwtTokenProvider.getAccessToken(req.getHeader("authorization"));
         if (!jwtTokenProvider.validateToken(token)) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
         }
 
-        Long memberId = jwtTokenProvider.getAccountId(token);
-        List<Order> orders = orderRepository.findByMemberIdOrderByIdDesc(memberId);
-        return new ResponseEntity<>(orders, HttpStatus.OK);
+        Long accountId = jwtTokenProvider.getAccountId(token);
+        String accessToken = resp.getHeader("accessToken");
+        String refreshToken = resp.getHeader("refreshToken");
+        List<Order> orders = orderRepository.findByMemberIdOrderByIdDesc(accountId);
+        OrderTokenDto dto = OrderTokenDto.builder()
+                .userId(accountId)
+                .accessToken(accessToken)
+                .refreshToken(refreshToken)
+                .orders(orders)
+                .build();
+//        return new ResponseEntity<>(orders, HttpStatus.OK);
+        return ResponseEntity.ok(BaseResponseDto.of(dto));
     }
     
-    // TODO - DTO로 return 시키기
-
     @Transactional
     @PostMapping("/api/orders")
     public ResponseEntity pushOrder(@RequestBody OrderDto orderDto, HttpServletRequest req) {

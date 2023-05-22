@@ -1,6 +1,5 @@
 package gallery.back.art.backend.common.filter;
 
-import gallery.back.art.backend.api.account.repository.AccountRepository;
 import gallery.back.art.backend.common.auth.JwtTokenProvider;
 import gallery.back.art.backend.common.code.ErrorCode;
 import gallery.back.art.backend.common.error.CustomException;

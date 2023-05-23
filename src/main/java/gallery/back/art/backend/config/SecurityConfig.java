@@ -3,6 +3,7 @@ package gallery.back.art.backend.config;
 import gallery.back.art.backend.common.filter.JwtAuthenticationFilter;
 import gallery.back.art.backend.common.auth.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -15,6 +16,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
+@Slf4j
 public class SecurityConfig {
 
     private final JwtTokenProvider jwtTokenProvider;
@@ -40,6 +42,10 @@ public class SecurityConfig {
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class)
+                .exceptionHandling()
+                .authenticationEntryPoint((request, response, authException) -> log.error("Auth Exception : " + authException))
+                .accessDeniedHandler((request, response, accessDeniedException) -> log.error("Access Denied Exception : " + accessDeniedException))
+                .and()
                 .build();
     }
 }

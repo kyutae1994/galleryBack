@@ -1,5 +1,6 @@
 package gallery.back.art.backend.api.account.entity;
 
+import gallery.back.art.backend.api.chat.dto.Chat;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
@@ -21,6 +22,9 @@ public class Member {
 
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
     private List<MemberAuthorityMapping> memberAuthorityMappings = new ArrayList<>();
+
+    @OneToOne(mappedBy = "member", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Chat chat;
 
     @Column(length = 50, nullable = false, unique = true)
     private String email;

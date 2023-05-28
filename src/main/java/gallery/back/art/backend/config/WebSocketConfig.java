@@ -8,21 +8,22 @@ import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerCo
 
 @Configuration
 @EnableWebSocketMessageBroker
-public class SpringConfig implements WebSocketMessageBrokerConfigurer {
+public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         // stomp 접속 주소 url => /ws-stomp
-        registry.addEndpoint("/ws-stomp") // 연결될 엔드포인트
+        registry.addEndpoint("/chat") // 연결될 엔드포인트
+                .setAllowedOrigins("http://localhost:3000")
                 .withSockJS(); // SocketJS 를 연결한다는 설정
     }
 
     @Override
     public void configureMessageBroker(MessageBrokerRegistry registry) {
         // 메시지를 구독하는 요청 url => 즉 메시지 받을 때
-        registry.enableSimpleBroker("/sub");
+        registry.enableSimpleBroker("/receive");
 
         // 메시지를 발행하는 요청 url => 즉 메시지 보낼 때
-        registry.setApplicationDestinationPrefixes("/pub");
+        registry.setApplicationDestinationPrefixes("/send");
     }
 }

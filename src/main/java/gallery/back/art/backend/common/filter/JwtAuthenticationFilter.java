@@ -29,6 +29,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         String uri = req.getRequestURI();
         log.info("uri = " + uri);
 
+//        resp.setHeader("Access-Control-Allow-Origin", "http://localhost:3000");
+
         Enumeration<String> headerNames = req.getHeaderNames();
         // TODO - 아래 While문 운영에는 배포 금지
         while(headerNames.hasMoreElements()){

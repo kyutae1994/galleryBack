@@ -31,7 +31,7 @@ public class SecurityConfig {
         return httpSecurity
                 .httpBasic().disable()
                 .csrf().disable()
-//                .cors().and()
+                .cors().and()
                 .formLogin().disable()
                 .authorizeHttpRequests()
                 .requestMatchers("/api/account/**", "/", "/chat/**").permitAll()

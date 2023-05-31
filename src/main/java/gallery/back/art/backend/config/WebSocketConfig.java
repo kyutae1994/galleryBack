@@ -14,7 +14,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         // stomp 접속 주소 url => /ws-stomp
         registry.addEndpoint("/ws") // 연결될 엔드포인트
-                .setAllowedOrigins("*")
+                .setAllowedOriginPatterns("*")
                 .withSockJS(); // SocketJS 를 연결한다는 설정
     }
 
@@ -24,6 +24,6 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
         registry.enableSimpleBroker("/send");
 
         // 메시지를 발행하는 요청 url => 즉 메시지 보낼 때
-        registry.setApplicationDestinationPrefixes("/message");
+//        registry.setApplicationDestinationPrefixes("/message");
     }
 }

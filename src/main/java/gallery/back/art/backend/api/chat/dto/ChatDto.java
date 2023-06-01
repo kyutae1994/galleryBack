@@ -17,5 +17,5 @@ public class ChatDto {
 
     // TODO - 후에 디비 연동시키면 작업해보기
     // 메시지 보낸 시간
-    private String sendTime;
+//    private String sendTime;
 }

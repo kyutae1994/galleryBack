@@ -23,8 +23,6 @@ public class ItemController {
     private final ItemRepository itemRepository;
     private final JwtTokenProvider jwtTokenProvider;
 
-    // TODO - refresh 토큰이 안들어옴 필터에
-    
     @GetMapping("/api/items")
     public ResponseEntity getItems(HttpServletRequest req, HttpServletResponse resp) {
         String token = jwtTokenProvider.getAccessToken(req.getHeader("authorization"));

@@ -25,7 +25,9 @@ public class CartController {
     private final CartRepository cartRepository;
     private final ItemRepository itemRepository;
 
-    // 카트 정보 조회
+    /**
+     * 카트 정보 조회
+     */
     @GetMapping("/api/cart/items")
     public ResponseEntity getCartItems(HttpServletRequest req, HttpServletResponse resp) {
         String token = jwtTokenProvider.getAccessToken(req.getHeader("authorization"));
@@ -46,23 +48,29 @@ public class CartController {
                 .itemList(items)
                 .build();
 
-//        return new ResponseEntity<>(items, HttpStatus.OK);
         return ResponseEntity.ok(BaseResponseDto.of(dto));
     }
 
-    // 장바구니를 담았을 때
+    /**
+     * 장바구니를 담았을 때
+     * @param itemId
+     */
     @PostMapping("/api/cart/items/{itemId}")
-    public ResponseEntity pushCartItem(@PathVariable("itemId") Long itemId, @CookieValue(value = "token", required = false) String token) {
+    public ResponseEntity pushCartItem(@PathVariable("itemId") Long itemId, HttpServletRequest req, HttpServletResponse resp) {
+        String token = jwtTokenProvider.getAccessToken(req.getHeader("authorization"));
         if (!jwtTokenProvider.validateToken(token)) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
         }
 
-        Long memberId = jwtTokenProvider.getAccountId(token);
-        Cart cart = cartRepository.findByMemberIdAndItemId(memberId, itemId);
+        Long accountId = jwtTokenProvider.getAccountId(token);
+        String accessToken = resp.getHeader("accessToken");
+        String refreshToken = resp.getHeader("refreshToken");
+
+        Cart cart = cartRepository.findByMemberIdAndItemId(accountId, itemId);
 
         if (cart == null) { // 아직 cart에 안담았으면 추가
             Cart newCart = new Cart();
-            newCart.setMemberId(memberId);
+            newCart.setMemberId(accountId);
             newCart.setItemId(itemId);
             cartRepository.save(newCart);
         }
@@ -70,15 +78,21 @@ public class CartController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
+    /**
+     * 장바구니에서 항목 지우기
+     * @param itemId
+     * @return
+     */
     @DeleteMapping("/api/cart/items/{itemId}")
-    public ResponseEntity removeCartItem(@PathVariable("itemId") Long itemId, @CookieValue(value = "token", required = false) String token) {
+    public ResponseEntity removeCartItem(@PathVariable("itemId") Long itemId, HttpServletRequest req, HttpServletResponse resp) {
 
+        String token = jwtTokenProvider.getAccessToken(req.getHeader("authorization"));
         if (!jwtTokenProvider.validateToken(token)) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
         }
 
-        Long memberId = jwtTokenProvider.getAccountId(token);
-        Cart cart = cartRepository.findByMemberIdAndItemId(memberId, itemId);
+        Long accountId = jwtTokenProvider.getAccountId(token);
+        Cart cart = cartRepository.findByMemberIdAndItemId(accountId, itemId);
 
         cartRepository.delete(cart);
         return new ResponseEntity<>(HttpStatus.OK);

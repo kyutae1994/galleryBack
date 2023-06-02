@@ -43,10 +43,16 @@ public class OrderController {
                 .refreshToken(refreshToken)
                 .orders(orders)
                 .build();
-//        return new ResponseEntity<>(orders, HttpStatus.OK);
+
         return ResponseEntity.ok(BaseResponseDto.of(dto));
     }
-    
+
+    /**
+     * 주문하기
+     * @param orderDto
+     * @param req
+     * @return
+     */
     @Transactional
     @PostMapping("/api/orders")
     public ResponseEntity pushOrder(@RequestBody OrderDto orderDto, HttpServletRequest req) {

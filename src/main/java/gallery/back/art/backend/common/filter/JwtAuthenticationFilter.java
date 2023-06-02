@@ -30,7 +30,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         log.info("uri = " + uri);
 
         Enumeration<String> headerNames = req.getHeaderNames();
-        // TODO - 아래 While문 운영에는 배포 금지
         while(headerNames.hasMoreElements()){
             String name= headerNames.nextElement();
             log.info("Header Name : " + name + ", Value : " + req.getHeader(name));

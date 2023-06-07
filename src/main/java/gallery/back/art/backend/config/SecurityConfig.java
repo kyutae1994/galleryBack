@@ -26,6 +26,17 @@ public class SecurityConfig {
         return new BCryptPasswordEncoder();
     }
 
+    private static final String[] PERMIT_URL_ARRAY = {
+            "/api/account/**",
+            "/",
+            "/chat/**",
+            "/ws/**",
+            "/swagger-ui/**",
+            "/swagger-resources",
+            "/swagger-resources/**",
+            "/swagger-ui.html"
+    };
+
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
         return httpSecurity
@@ -34,7 +45,7 @@ public class SecurityConfig {
                 .cors().and()
                 .formLogin().disable()
                 .authorizeHttpRequests()
-                .requestMatchers("/api/account/**", "/", "/chat/**", "/ws/**").permitAll()
+                .requestMatchers(PERMIT_URL_ARRAY).permitAll()
                 .requestMatchers("/**").hasAnyRole("USER")
                 .anyRequest().authenticated()
                 .and()

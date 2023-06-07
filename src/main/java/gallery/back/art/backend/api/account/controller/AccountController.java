@@ -11,6 +11,7 @@ import gallery.back.art.backend.api.account.repository.AccountRepository;
 import gallery.back.art.backend.api.account.service.AccountService;
 import gallery.back.art.backend.common.dto.BaseResponseDto;
 import gallery.back.art.backend.common.error.CustomException;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -34,6 +35,7 @@ public class AccountController {
     private final BCryptPasswordEncoder encoder;
 
     @PostMapping("/login")
+    @Operation(summary = "로그인", description = "로그인이 됩니다.", tags = {"Account Controller"})
     public ResponseEntity login(@RequestBody Map<String, String> params) throws CustomException {
         Member member = accountRepository.findByEmail(params.get("email"));
 

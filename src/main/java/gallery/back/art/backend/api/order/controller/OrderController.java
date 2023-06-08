@@ -20,13 +20,14 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
+@CrossOrigin(origins = "*", allowedHeaders = "*")
 public class OrderController {
 
     private final JwtTokenProvider jwtTokenProvider;
     private final OrderRepository orderRepository;
     private final CartRepository cartRepository;
 
-    @GetMapping("/api/orders")
+    @GetMapping("/orders")
     public ResponseEntity getOrder(HttpServletRequest req, HttpServletResponse resp) {
         String token = jwtTokenProvider.getAccessToken(req.getHeader("authorization"));
         if (!jwtTokenProvider.validateToken(token)) {
@@ -54,7 +55,7 @@ public class OrderController {
      * @return
      */
     @Transactional
-    @PostMapping("/api/orders")
+    @PostMapping("/orders")
     public ResponseEntity pushOrder(@RequestBody OrderDto orderDto, HttpServletRequest req) {
         String token = jwtTokenProvider.getAccessToken(req.getHeader("authorization"));
         if (!jwtTokenProvider.validateToken(token)) {

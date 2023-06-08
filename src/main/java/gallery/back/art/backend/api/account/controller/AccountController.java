@@ -25,7 +25,8 @@ import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/account")
+@CrossOrigin(origins = "*", allowedHeaders = "*")
+@RequestMapping("/account")
 public class AccountController {
 
     private final AuthorityRepository authorityRepository;

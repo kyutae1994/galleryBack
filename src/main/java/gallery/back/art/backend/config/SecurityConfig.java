@@ -27,7 +27,7 @@ public class SecurityConfig {
     }
 
     private static final String[] PERMIT_URL_ARRAY = {
-            "/api/account/**",
+            "/account/**",
             "/",
             "/chat/**",
             "/ws/**",

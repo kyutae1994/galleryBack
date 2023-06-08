@@ -19,6 +19,8 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
+@RequestMapping("/cart")
+@CrossOrigin(origins = "*", allowedHeaders = "*")
 public class CartController {
 
     private final JwtTokenProvider jwtTokenProvider;
@@ -28,7 +30,7 @@ public class CartController {
     /**
      * 카트 정보 조회
      */
-    @GetMapping("/api/cart/items")
+    @GetMapping("/items")
     public ResponseEntity getCartItems(HttpServletRequest req, HttpServletResponse resp) {
         String token = jwtTokenProvider.getAccessToken(req.getHeader("authorization"));
         if (!jwtTokenProvider.validateToken(token)) {
@@ -55,7 +57,7 @@ public class CartController {
      * 장바구니를 담았을 때
      * @param itemId
      */
-    @PostMapping("/api/cart/items/{itemId}")
+    @PostMapping("/items/{itemId}")
     public ResponseEntity pushCartItem(@PathVariable("itemId") Long itemId, HttpServletRequest req, HttpServletResponse resp) {
         String token = jwtTokenProvider.getAccessToken(req.getHeader("authorization"));
         if (!jwtTokenProvider.validateToken(token)) {
@@ -83,7 +85,7 @@ public class CartController {
      * @param itemId
      * @return
      */
-    @DeleteMapping("/api/cart/items/{itemId}")
+    @DeleteMapping("/items/{itemId}")
     public ResponseEntity removeCartItem(@PathVariable("itemId") Long itemId, HttpServletRequest req, HttpServletResponse resp) {
 
         String token = jwtTokenProvider.getAccessToken(req.getHeader("authorization"));

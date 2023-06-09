@@ -32,9 +32,12 @@ public class SecurityConfig {
             "/chat/**",
             "/ws/**",
             "/swagger-ui/**",
+            "/api/swagger-ui/**",
             "/swagger-resources",
             "/swagger-resources/**",
-            "/swagger-ui.html"
+            "/swagger-ui.html",
+            "/api/swagger-ui.html",
+            "/api-docs/**"
     };
 
     @Bean

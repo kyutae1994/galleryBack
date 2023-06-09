@@ -12,6 +12,7 @@ import gallery.back.art.backend.api.account.service.AccountService;
 import gallery.back.art.backend.common.dto.BaseResponseDto;
 import gallery.back.art.backend.common.error.CustomException;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -27,6 +28,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 @RequestMapping("/account")
+@Tag(name = "회원 API", description = "Swagger 회원 API")
 public class AccountController {
 
     private final AuthorityRepository authorityRepository;
@@ -36,7 +38,7 @@ public class AccountController {
     private final BCryptPasswordEncoder encoder;
 
     @PostMapping("/login")
-    @Operation(summary = "로그인", description = "로그인이 됩니다.", tags = {"Account Controller"})
+    @Operation(summary = "로그인", description = "로그인이 됩니다.")
     public ResponseEntity login(@RequestBody Map<String, String> params) throws CustomException {
         Member member = accountRepository.findByEmail(params.get("email"));
 

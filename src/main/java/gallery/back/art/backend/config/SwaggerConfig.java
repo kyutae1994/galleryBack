@@ -10,15 +10,14 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpHeaders;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport;
 
 @Configuration
-public class SwaggerConfig extends WebMvcConfigurationSupport {
+public class SwaggerConfig {
 
     @Bean
     public OpenAPI openAPI(@Value("${springdoc.version}") String version) {
         Info info = new Info()
-                .title("Default API 문서") // 타이틀
+                .title("Gallery API") // 타이틀
                 .version(version) // 문서 버전
                 .description("전체 API 목록") // 문서 설명
                 .contact(new Contact() // 연락처

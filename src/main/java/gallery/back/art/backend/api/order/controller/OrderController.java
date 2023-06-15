@@ -7,6 +7,8 @@ import gallery.back.art.backend.api.order.entity.Order;
 import gallery.back.art.backend.api.cart.repository.CartRepository;
 import gallery.back.art.backend.api.order.repository.OrderRepository;
 import gallery.back.art.backend.common.dto.BaseResponseDto;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +23,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @CrossOrigin(origins = "*", allowedHeaders = "*")
+@Tag(name = "주문 API", description = "Swagger 주문 API")
 public class OrderController {
 
     private final JwtTokenProvider jwtTokenProvider;
@@ -28,6 +31,7 @@ public class OrderController {
     private final CartRepository cartRepository;
 
     @GetMapping("/orders")
+    @Operation(summary = "주문 조회", description = "주문했던 항목이 조회 됩니다.")
     public ResponseEntity getOrder(HttpServletRequest req, HttpServletResponse resp) {
         String token = jwtTokenProvider.getAccessToken(req.getHeader("authorization"));
         if (!jwtTokenProvider.validateToken(token)) {
@@ -56,6 +60,7 @@ public class OrderController {
      */
     @Transactional
     @PostMapping("/orders")
+    @Operation(summary = "주문하기", description = "주문 됩니다.")
     public ResponseEntity pushOrder(@RequestBody OrderDto orderDto, HttpServletRequest req) {
         String token = jwtTokenProvider.getAccessToken(req.getHeader("authorization"));
         if (!jwtTokenProvider.validateToken(token)) {

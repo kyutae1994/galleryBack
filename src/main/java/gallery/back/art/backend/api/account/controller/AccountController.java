@@ -51,6 +51,7 @@ public class AccountController {
     }
 
     @PostMapping("/logout")
+    @Operation(summary = "로그아웃", description = "로그아웃이 됩니다.")
     public ResponseEntity logout() {
         return new ResponseEntity<>(HttpStatus.OK);
     }
@@ -61,6 +62,7 @@ public class AccountController {
      * @return check
      */
     @PostMapping("/duplicate")
+    @Operation(summary = "회원가입 중복검사", description = "아이디 중복검사를 합니다.")
     public ResponseEntity duplicate(@RequestBody Map<String, String> params) {
         Member member = accountRepository.findByEmail(params.get("email"));
 
@@ -76,6 +78,7 @@ public class AccountController {
      * @return
      */
     @PostMapping("/register")
+    @Operation(summary = "회원가입", description = "회원가입이 됩니다.")
     public ResponseEntity register(@RequestBody Map<String, String> params) {
 
         if (accountRepository.findByEmail(params.get("email")) == null) {

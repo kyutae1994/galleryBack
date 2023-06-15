@@ -7,6 +7,8 @@ import gallery.back.art.backend.api.item.entity.Item;
 import gallery.back.art.backend.api.cart.repository.CartRepository;
 import gallery.back.art.backend.api.item.repository.ItemRepository;
 import gallery.back.art.backend.common.dto.BaseResponseDto;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +23,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @RequestMapping("/cart")
 @CrossOrigin(origins = "*", allowedHeaders = "*")
+@Tag(name = "장바구니 API", description = "Swagger 장바구니 API")
 public class CartController {
 
     private final JwtTokenProvider jwtTokenProvider;
@@ -31,6 +34,7 @@ public class CartController {
      * 카트 정보 조회
      */
     @GetMapping("/items")
+    @Operation(summary = "장바구니 조회", description = "장바구니 항목이 조회 됩니다.")
     public ResponseEntity getCartItems(HttpServletRequest req, HttpServletResponse resp) {
         String token = jwtTokenProvider.getAccessToken(req.getHeader("authorization"));
         if (!jwtTokenProvider.validateToken(token)) {
@@ -58,6 +62,7 @@ public class CartController {
      * @param itemId
      */
     @PostMapping("/items/{itemId}")
+    @Operation(summary = "장바구니 등록", description = "장바구니 항목에 등록이 됩니다.")
     public ResponseEntity pushCartItem(@PathVariable("itemId") Long itemId, HttpServletRequest req, HttpServletResponse resp) {
         String token = jwtTokenProvider.getAccessToken(req.getHeader("authorization"));
         if (!jwtTokenProvider.validateToken(token)) {
@@ -86,6 +91,7 @@ public class CartController {
      * @return
      */
     @DeleteMapping("/items/{itemId}")
+    @Operation(summary = "장바구니 항목 삭제", description = "장바구니 항목이 삭제 됩니다.")
     public ResponseEntity removeCartItem(@PathVariable("itemId") Long itemId, HttpServletRequest req, HttpServletResponse resp) {
 
         String token = jwtTokenProvider.getAccessToken(req.getHeader("authorization"));
